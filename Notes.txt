@@ -7,3 +7,9 @@ Feedback for initial Dashboard:
 - Camera feeds, when the user clicks one of them it expands to fullscreen 
 - Convert images to gifs and have them in GitHub repo 
 
+**Improvement**
+- Write a readme
+
+Have some time to do
+- Add google maps positioning API call
+
