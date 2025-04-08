@@ -67,37 +67,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		<!-- Right Panel -->
 		<div class="right-panel">
-				<div class="video-container">
-    <h2>Camera Feed 1</h2>
-    <video 
-        autoplay 
-        loop 
-        muted 
-        playsinline 
-        class="video-feed" 
-        id="video1"
-        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23000'/%3E%3C/svg%3E"
-    >
-        <source src="{% static 'dashboard/media/left_vid.mp4' %}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+			<div class="video-container">
+			    <h2>Camera Feed 1</h2>
+			    <img src="{% static 'dashboard/media/left_feed.gif' %}" 
+				 class="feed-image" 
+				 alt="Camera Feed 1"
+				 onclick="toggleFullscreen(this)">
+			</div>
 
-<div class="video-container">
-    <h2>Camera Feed 2</h2>
-    <video 
-        autoplay 
-        loop 
-        muted 
-        playsinline 
-        class="video-feed" 
-        id="video2"
-        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23000'/%3E%3C/svg%3E"
-    >
-        <source src="{% static 'dashboard/media/right_vid.mp4' %}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
-</div>
+			<div class="video-container">
+			    <h2>Camera Feed 2</h2>
+			    <img src="{% static 'dashboard/media/right_feed.gif' %}" 
+				 class="feed-image" 
+				 alt="Camera Feed 2"
+				 onclick="toggleFullscreen(this)">
+			</div>
 			<!-- Flight Information Panel -->
 			<div class="info-panel">
 				<h2>Flight Information</h2>
@@ -115,6 +99,39 @@ document.addEventListener('DOMContentLoaded', function() {
 	<!-- Leaflet JS -->
 	<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 	<script src="{% static 'dashboard/js/map.js' %}"></script>
+	<script>
+	function toggleFullscreen(element) {
+	    if (!document.fullscreenElement) {
+		if (element.requestFullscreen) {
+		    element.requestFullscreen();
+		} else if (element.webkitRequestFullscreen) {
+		    element.webkitRequestFullscreen();
+		} else if (element.msRequestFullscreen) {
+		    element.msRequestFullscreen();
+		}
+	    } else {
+		if (document.exitFullscreen) {
+		    document.exitFullscreen();
+		} else if (document.webkitExitFullscreen) {
+		    document.webkitExitFullscreen();
+		} else if (document.msExitFullscreen) {
+		    document.msExitFullscreen();
+		}
+	    }
+	}
+
+	// Handle fullscreen change
+	document.addEventListener('fullscreenchange', function() {
+	    const fullscreenElement = document.fullscreenElement;
+	    if (fullscreenElement) {
+		fullscreenElement.classList.add('fullscreen');
+	    } else {
+		document.querySelectorAll('.feed-image').forEach(img => {
+		    img.classList.remove('fullscreen');
+		});
+	    }
+	});
+	</script>
 </body>
 
 </html>

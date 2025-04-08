@@ -27,16 +27,6 @@ body {
 	height: 100%;
 }
 
-.map-overlay {
-	position: absolute;
-	bottom: 20px;
-	left: 20px;
-	background: rgba(255, 255, 255, 0.9);
-	padding: 10px;
-	border-radius: 5px;
-	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
 .radius-legend h3 {
 	margin-bottom: 10px;
 	font-size: 14px;
@@ -79,13 +69,6 @@ body {
 	display: flex;
 	flex-direction: column;
 	background: #f5f5f5;
-}
-
-.video-container {
-	height: 33.33%;
-	padding: 15px;
-	background: #fff;
-	border-bottom: 1px solid #ddd;
 }
 
 .video-container h2 {
@@ -162,15 +145,6 @@ body {
 	color: #333;
 }
 
-.video-container {
-	height: 33.33%;
-	padding: 15px;
-	background: #1a1a1a;
-	border-bottom: 1px solid #333;
-	display: flex;
-	flex-direction: column;
-}
-
 .video-feed {
 	width: 100%;
 	height: calc(100% - 30px);
@@ -188,4 +162,51 @@ body {
 	margin-bottom: 10px;
 	font-size: 16px;
 	color: #fff;
+}
+
+.video-container {
+	height: 33.33%;
+	padding: 15px;
+	background: #1a1a1a;
+	border-bottom: 1px solid #333;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-image {
+	width: 100%;
+	height: calc(100% - 30px);
+	object-fit: contain;
+	background: #000;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: transform 0.3s ease;
+}
+
+.feed-image:hover {
+	transform: scale(1.02);
+}
+
+.feed-image.fullscreen {
+	object-fit: contain;
+	width: 100vw;
+	height: 100vh;
+	background: #000;
+	margin: 0;
+	padding: 0;
+	border-radius: 0;
+}
+
+.map-overlay {
+	position: absolute;
+	bottom: 20px;
+	left: 20px;
+	background: rgba(255, 255, 255, 0.95);
+	padding: 15px;
+	border-radius: 8px;
+	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+.boat-icon {
+	filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
 }
