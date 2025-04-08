@@ -27,3 +27,5 @@ Follow these steps to get the project up and running:
     ```bash
     python manage.py runserver
     ```
+
+Now the application should be running locally at ```http://127.0.0.1:8000/```
