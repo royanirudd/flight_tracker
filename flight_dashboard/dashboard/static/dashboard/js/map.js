@@ -145,8 +145,16 @@ async function updateWeather(lat, lon) {
 // Function to update flight markers
 async function updateFlights() {
 	try {
+		const bounds = map.getBounds();
+		const params = new URLSearchParams({
+			north: bounds.getNorth(),
+			south: bounds.getSouth(),
+			east: bounds.getEast(),
+			west: bounds.getWest()
+		});
+
 		console.log('Fetching flight data...');
-		const response = await fetch('/api/flights/');
+		const response = await fetch(`/api/flights/?${params}`);
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
@@ -249,7 +257,7 @@ async function updateFlights() {
 }
 
 // Update flights every 15 seconds
-setInterval(updateFlights, 15000);
+setInterval(updateFlights, 30000);
 
 // Initial update
 updateFlights();
