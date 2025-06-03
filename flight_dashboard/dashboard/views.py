@@ -16,7 +16,7 @@ CITY = "Massachusetts"
 LAT, LON = 42.3601, -71.0589  # Boston coordinates
 WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
 FLIGHT_API_URL = "https://opensky-network.org/api/states/all"
-USE_API = False
+USE_API = True
 
 # Cache for CSV data
 csv_data = None
