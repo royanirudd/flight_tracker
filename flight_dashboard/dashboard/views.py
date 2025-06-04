@@ -95,6 +95,11 @@ def flight_data(request):
                     continue
 
             current_time = int(data.get("time", 0))
+
+            return JsonResponse({
+                "time": current_time,
+                "states": processed_states
+            })
         else:
             # Use local CSV data
             processed_states = process_local_flights(bounds)

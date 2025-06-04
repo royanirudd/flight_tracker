@@ -6,14 +6,43 @@ const flightInitialPositions = {};
 let flightMarkers = {};
 const MAP_CENTER = [42.3601, -71.0589];  // Boston, Massachusetts coordinates
 
-// Helper function for rotation
+const createPlaneIcon = (heading = 0) => L.divIcon({
+	html: `<div class="plane-icon-wrapper" style="transform: rotate(${heading}deg)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#2196F3">
+                <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+            </svg>
+           </div>`,
+	className: 'plane-icon',
+	iconSize: [20, 20],
+	iconAnchor: [10, 10]
+});
+
+const shipInfo = {
+	name: "USS Example",
+	type: "Research Vessel",
+	callsign: "USEX",
+	heading: 145,
+	speed: 12.5,
+	coordinates: MAP_CENTER
+};
+
 function setMapRotation(angle) {
 	if (map._bearing === undefined) map._bearing = 0;
 	map._bearing = angle;
 	map.setBearing(angle);
 }
 
-// Wait for DOM to be ready
+function throttle(func, limit) {
+	let inThrottle;
+	return function(...args) {
+		if (!inThrottle) {
+			func.apply(this, args);
+			inThrottle = true;
+			setTimeout(() => inThrottle = false, limit);
+		}
+	}
+}
+
 document.addEventListener('DOMContentLoaded', function() {
 	// Initialize map first
 	map = L.map('map', {
@@ -38,27 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		iconAnchor: [12, 12]
 	});
 
-	const planeIcon = L.divIcon({
-		html: `<div class="plane-icon-wrapper">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#2196F3">
-                    <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-                </svg>
-               </div>`,
-		className: 'plane-icon',
-		iconSize: [20, 20],
-		iconAnchor: [10, 10]
-	});
-
-	// Ship information
-	const shipInfo = {
-		name: "USS Example",
-		type: "Research Vessel",
-		callsign: "USEX",
-		heading: 145,
-		speed: 12.5,
-		coordinates: MAP_CENTER
-	};
-
 	// Add rotation handlers
 	map.on('mousedown', (e) => {
 		if (e.originalEvent.ctrlKey) {
@@ -81,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 
-	document.addEventListener('mousemove', (e) => {
+	document.addEventListener('mousemove', throttle((e) => {
 		if (!isRotating) return;
 
 		const mapContainer = map.getContainer();
@@ -96,7 +104,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			e.clientX - center.x
 		) * 180 / Math.PI;
 
-		const rotation = angle - startRotation;
+		const sensitivityFactor = 0.2;
+		const rotation = (angle - startRotation) * sensitivityFactor;
+
 		setMapRotation(rotation);
 
 		// Rotate markers
@@ -106,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				icon.style.transform = `rotate(${rotation}deg)`;
 			}
 		});
-	});
+	}, 16));
 
 	document.addEventListener('mouseup', () => {
 		if (isRotating) {
@@ -303,11 +313,13 @@ async function updateFlights() {
 
 		data.states.forEach((flight, index) => {
 			try {
-				const callsign = flight.callsign;
-				const latitude = flight.latitude;
-				const longitude = flight.longitude;
+				const callsign = flight[1];
+				const latitude = flight[6];
+				const longitude = flight[5];
 
 				if (!callsign || !latitude || !longitude) return;
+
+				activeFlights.add(callsign);
 
 				const position = [latitude, longitude];
 
@@ -332,10 +344,13 @@ async function updateFlights() {
 				path.setLatLngs(positions);
 
 				if (flightMarkers[callsign]) {
+					const heading = flight[10] || 0;
 					flightMarkers[callsign].setLatLng([latitude, longitude]);
+					flightMarkers[callsign].setIcon(createPlaneIcon(heading));
 				} else {
+					const heading = flight[10] || 0;
 					const marker = L.marker([latitude, longitude], {
-						icon: planeIcon
+						icon: createPlaneIcon(heading)
 					}).addTo(map);
 
 					marker.on('click', () => {
